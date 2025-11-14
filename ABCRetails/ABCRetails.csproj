@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>8d7ecb67-ef36-4612-a285-52f086b874b6</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Azure SDKs -->
+		<PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.25.0" />
+		<PackageReference Include="Azure.Storage.Files.Shares" Version="12.23.0" />
+		<PackageReference Include="Azure.Storage.Queues" Version="12.23.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+
+		<!-- Code generation tool -->
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://www.schemastore.org/assetlinks.json" /></VisualStudio></ProjectExtensions>
+
+	<!-- Uncomment and update the path below to reference the project that contains Order (ABCRetails.Models)
+       Example relative path: ../ABCRetails.Models/ABCRetails.Models.csproj -->
+	<!--
+  <ItemGroup>
+    <ProjectReference Include="..\ABCRetails.Models\ABCRetails.Models.csproj" />
+  </ItemGroup>
+  -->
+
+</Project>

@@ -1,0 +1,66 @@
+﻿@model ABCRetails.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0 text-center">
+                    <i class="fas fa-sign-in-alt me-2"></i>@ViewData["Title"]
+                </h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Index" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label">
+                            <i class="fas fa-user me-1"></i>Username
+                        </label>
+                        <input asp-for="Username" class="form-control" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">
+                            <i class="fas fa-lock me-1"></i>Password
+                        </label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </button>
+                        <a asp-action="Register" class="btn btn-outline-secondary">
+                            <i class="fas fa-user-plus me-1"></i>Register New Account
+                        </a>
+                    </div>
+                </form>
+
+                <div class="mt-4">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">Demo Accounts:</h6>
+                        <p class="mb-1"><strong>Admin:</strong> admin01 / adminpass123</p>
+                        <p class="mb-0"><strong>Customer:</strong> customer1 / customerpass123</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

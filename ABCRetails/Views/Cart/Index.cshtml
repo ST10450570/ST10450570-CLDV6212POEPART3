@@ -1,0 +1,236 @@
+﻿@model IEnumerable<ABCRetails.Models.ViewModels.CartItemViewModel>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+@* Add CSRF token *@
+<form method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-6 text-primary">
+        <i class="fas fa-shopping-cart me-2"></i>@ViewData["Title"]
+    </h1>
+    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+    </a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list me-2"></i>Cart Items
+                <span class="badge bg-secondary ms-2">@Model.Count()</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(item.ProductImageUrl))
+                                        {
+                                            <img src="@item.ProductImageUrl" alt="@item.ProductName"
+                                                 class="img-thumbnail me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center"
+                                                 style="width: 60px; height: 60px;">
+                                                <i class="fas fa-image text-muted"></i>
+                                            </div>
+                                        }
+                                        <div>
+                                            <h6 class="mb-1">@item.ProductName</h6>
+                                            <small class="text-muted">ID: @item.ProductId</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">@item.Price.ToString("C")</span>
+                                </td>
+                                <td>
+                                    <div class="input-group input-group-sm" style="width: 140px;">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                                onclick="updateQuantity(@item.CartId, @(item.Quantity - 1))"
+                                                @(item.Quantity <= 1 ? "disabled" : "")>
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control text-center"
+                                               value="@item.Quantity" min="1" max="@item.StockAvailable"
+                                               id="quantity-@item.CartId" readonly>
+                                        <button class="btn btn-outline-secondary" type="button"
+                                                onclick="updateQuantity(@item.CartId, @(item.Quantity + 1))"
+                                                @(item.Quantity >= item.StockAvailable ? "disabled" : "")>
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <small class="form-text text-muted">Max: @item.StockAvailable</small>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-success">@item.TotalPrice.ToString("C")</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm"
+                                            onclick="removeItem(@item.CartId)" title="Remove">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">
+                        Total: <span class="text-success">@Model.Sum(item => item.TotalPrice).ToString("C")</span>
+                    </h5>
+                </div>
+                <div class="col-md-6 text-end">
+                    <form asp-action="Checkout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-credit-card me-2"></i>Checkout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Your cart is empty</h4>
+        <p class="text-muted">Add some products to your cart to get started.</p>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-primary mt-2">
+            <i class="fas fa-store me-2"></i>Start Shopping
+        </a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function getAntiForgeryToken() {
+            return document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        }
+
+        async function updateQuantity(cartId, newQuantity) {
+            try {
+                const token = getAntiForgeryToken();
+                if (!token) {
+                    showToast('Security token missing. Please refresh the page.', 'error');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('cartId', cartId);
+                formData.append('quantity', newQuantity);
+                formData.append('__RequestVerificationToken', token);
+
+                const response = await fetch('@Url.Action("UpdateCartItem", "Cart")', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Cart updated!', 'success');
+                    // Reload page to reflect changes
+                    setTimeout(() => location.reload(), 500);
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating cart:', error);
+                showToast('Error updating cart.', 'error');
+            }
+        }
+
+        async function removeItem(cartId) {
+            if (!confirm('Are you sure you want to remove this item from your cart?')) {
+                return;
+            }
+
+            try {
+                const token = getAntiForgeryToken();
+                if (!token) {
+                    showToast('Security token missing. Please refresh the page.', 'error');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('cartId', cartId);
+                formData.append('__RequestVerificationToken', token);
+
+                const response = await fetch('@Url.Action("RemoveFromCart", "Cart")', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Item removed from cart!', 'success');
+                    setTimeout(() => location.reload(), 500);
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error removing item:', error);
+                showToast('Error removing item from cart.', 'error');
+            }
+        }
+
+        async function updateCartCount() {
+            try {
+                const response = await fetch('@Url.Action("GetCartCount", "Cart")');
+                const data = await response.json();
+                const cartBadge = document.getElementById('cartCount');
+                if (cartBadge) {
+                    cartBadge.textContent = data.count;
+                }
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 3000);
+        }
+    </script>
+}

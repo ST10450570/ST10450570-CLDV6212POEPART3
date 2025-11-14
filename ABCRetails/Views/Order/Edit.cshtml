@@ -1,0 +1,224 @@
+﻿@model ABCRetails.Models.ViewModels.OrderEditViewModel
+@{
+    ViewData["Title"] = "Edit Order";
+}
+
+<div class="header-bubble mb-4">
+    <h1 class="text-white">Edit Order</h1>
+    <div class="bubble-decoration">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit"
+              asp-controller="Order"
+              asp-route-id="@Model.Id"
+              method="post"
+              class="shadow-sm p-4 bg-white rounded">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Order.CustomerId" />
+            <input type="hidden" asp-for="Order.Username" />
+            <input type="hidden" asp-for="Order.ProductId" />
+            <input type="hidden" asp-for="Order.ProductName" />
+            <input type="hidden" asp-for="Order.UnitPrice" />
+            <input type="hidden" asp-for="Order.ProductImageUrl" />
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Order Information</h5>
+                </div>
+                <div class="card-body row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Order ID</label>
+                        <input value="@Model.Id" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Customer</label>
+                        <input value="@Model.Order.Username" class="form-control" readonly />
+                        <small class="form-text text-muted">Customer ID: @Model.Order.CustomerId</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Product</label>
+                        <input value="@Model.Order.ProductName" class="form-control" readonly />
+                        <small class="form-text text-muted">Product ID: @Model.Order.ProductId</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Order.Quantity" class="form-label fw-semibold"></label>
+                        <input asp-for="Order.Quantity" class="form-control" type="number" min="1" />
+                        <span asp-validation-for="Order.Quantity" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Pricing & Status</h5>
+                </div>
+                <div class="card-body row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Unit Price</label>
+                        <input value="@Model.Order.UnitPrice.ToString("C")" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Total Price</label>
+                        <input value="@((Model.Order.UnitPrice * Model.Order.Quantity).ToString("C"))" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Order.OrderDate" class="form-label fw-semibold"></label>
+                        <input asp-for="Order.OrderDate"
+                               class="form-control"
+                               type="date"
+                               value="@Model.Order.OrderDate.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="Order.OrderDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Order.Status" class="form-label fw-semibold"></label>
+                        <select asp-for="Order.Status" class="form-control">
+                            @foreach (var status in Model.StatusOptions)
+                            {
+                                <option value="@status" selected="@(Model.Order.Status == status)">
+                                    @status
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="Order.Status" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to List
+                </a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-1"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .header-bubble {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(78, 84, 200, 0.3);
+        }
+
+            .header-bubble h1 {
+                font-weight: 700;
+                font-size: 2.5rem;
+                margin: 0;
+                position: relative;
+                z-index: 2;
+            }
+
+        .bubble-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+            .bubble:nth-child(1) {
+                width: 80px;
+                height: 80px;
+                top: -20px;
+                right: 30px;
+            }
+
+            .bubble:nth-child(2) {
+                width: 60px;
+                height: 60px;
+                bottom: -15px;
+                left: 40px;
+            }
+
+            .bubble:nth-child(3) {
+                width: 40px;
+                height: 40px;
+                bottom: 30px;
+                right: 60px;
+            }
+
+        .btn {
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(to right, #3a3fb8, #7a80f0);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(78, 84, 200, 0.3);
+            }
+
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Add loading indicator on form submit
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
+        });
+
+        // Auto-calculate total price when quantity changes
+        document.getElementById('Order_Quantity').addEventListener('input', function() {
+            const quantity = parseInt(this.value) || 0;
+            const unitPrice = @Model.Order.UnitPrice;
+            const totalPrice = quantity * unitPrice;
+
+            // Format as currency
+            const formattedTotal = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(totalPrice);
+
+            // Update the display (you might want to add an ID to your total price input)
+            const totalInput = document.querySelector('input[value*="$"]');
+            if (totalInput) {
+                totalInput.value = formattedTotal;
+            }
+        });
+    </script>
+}

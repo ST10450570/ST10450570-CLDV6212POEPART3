@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white text-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-check-circle me-2"></i>Order Confirmed!
+                </h2>
+            </div>
+            <div class="card-body text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-shopping-bag fa-5x text-success mb-4"></i>
+                    <h3 class="text-success">Thank You for Your Order!</h3>
+                    <p class="lead text-muted">Your order has been successfully placed and is being processed.</p>
+                </div>
+
+                <div class="row text-start mb-4">
+                    <div class="col-md-6">
+                        <h5>What happens next?</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Order confirmation sent</li>
+                            <li><i class="fas fa-shipping-fast text-primary me-2"></i>Order being processed</li>
+                            <li><i class="fas fa-box text-warning me-2"></i>Ready for shipment</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Need help?</h5>
+                        <p class="text-muted">
+                            If you have any questions about your order, please contact our customer service team.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary me-md-2">
+                        <i class="fas fa-store me-2"></i>Continue Shopping
+                    </a>
+                    <a asp-controller="Order" asp-action="MyOrders" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-2"></i>View Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,133 @@
+﻿@model ABCRetails.Models.User
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0 text-center">
+                    <i class="fas fa-user-plus me-2"></i>@ViewData["Title"]
+                </h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label">
+                            <i class="fas fa-user me-1"></i>Username
+                        </label>
+                        <input asp-for="Username" class="form-control" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">
+                            <i class="fas fa-envelope me-1"></i>Email
+                        </label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user me-1"></i>First Name 
+                        </label>
+                        <input type="text" id="name" name="name" class="form-control" />
+                        <small class="form-text text-muted">Required for customer accounts</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="surname" class="form-label">
+                            <i class="fas fa-user me-1"></i>Last Name 
+                        </label>
+                        <input type="text" id="surname" name="surname" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="shippingAddress" class="form-label">
+                            <i class="fas fa-map-marker-alt me-1"></i>Shipping Address 
+                        </label>
+                        <textarea id="shippingAddress" name="shippingAddress" class="form-control" rows="2"></textarea>
+                        <small class="form-text text-muted">Required for customer accounts</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock me-1"></i>Password
+                        </label>
+                        <input type="password" id="password" name="password" class="form-control" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="password" data-valmsg-replace="true"></span>
+                        <small class="form-text text-muted">Password must be at least 6 characters long.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">
+                            <i class="fas fa-lock me-1"></i>Confirm Password
+                        </label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="confirmPassword" data-valmsg-replace="true"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Role" class="form-label">
+                            <i class="fas fa-user-tag me-1"></i>Account Type
+                        </label>
+                        <select asp-for="Role" class="form-control" id="roleSelect">
+                            <option value="Customer">Customer Account</option>
+                            <option value="Admin">Admin Account</option>
+                        </select>
+                        <small class="form-text text-muted">
+                            Customer accounts will be synced with our order system. Admin accounts are for management only.
+                        </small>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Login
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('roleSelect');
+            const customerFields = ['name', 'surname', 'shippingAddress'];
+
+            function toggleCustomerFields() {
+                const isCustomer = roleSelect.value === 'Customer';
+
+                customerFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        if (isCustomer) {
+                            field.required = true;
+                            field.closest('.mb-3').style.display = 'block';
+                        } else {
+                            field.required = false;
+                            field.closest('.mb-3').style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            roleSelect.addEventListener('change', toggleCustomerFields);
+            toggleCustomerFields(); // Initial call
+        });
+    </script>
+}
